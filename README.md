@@ -6,6 +6,7 @@
 
 - [命名規則](/naming.md)
 - [データ型](/datatypes.md)
+- [ベストプラクティス](/best_practice.md)
 
 ## 目次
 
