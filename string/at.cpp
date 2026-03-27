@@ -1,8 +1,0 @@
-#include <iostream>
-#include <string>
-using namespace std;
-
-int main() {
-    string txt = "Hello World";
-    cout << txt.at(1);  // e
-}
