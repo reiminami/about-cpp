@@ -1,6 +1,2 @@
-#ifndef F_HPP_
-#define F_HPP_
-
+#pragma once
 void Hello();
-
-#endif
