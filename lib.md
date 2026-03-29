@@ -1,12 +1,9 @@
 # ライブラリ
 
-## トピック
-
-1. [about-c/string.h (別リポジトリ)](https://github.com/reiminami/about-c?tab=readme-ov-file#stringh-%E6%96%87%E5%AD%97%E5%88%97%E6%93%8D%E4%BD%9C)
-1. [about-c/time.h (別リポジトリ)](https://github.com/reiminami/about-c?tab=readme-ov-file#timeh-%E6%99%82%E9%96%93)
-
 ## 目次
 
+1. [【外部】 about-c/string.h](https://github.com/reiminami/about-c?tab=readme-ov-file#stringh-%E6%96%87%E5%AD%97%E5%88%97%E6%93%8D%E4%BD%9C)
+1. [【外部】 about-c/time.h](https://github.com/reiminami/about-c?tab=readme-ov-file#timeh-%E6%99%82%E9%96%93)
 1. [iostream](#iostream) - 標準入出力
 1. [fstream](#fstream) - ファイル
 1. [cmath](#cmath) - 数学
@@ -186,38 +183,158 @@ string* d = colors.data();                  // 要素を指すメモリブロッ
 
 ## algorithm
 
-- [all_of](/algorithm/all_of.cpp) - 各要素が条件に一致するか？
-- [any_of](/algorithm/any_of.cpp) - 要素のいずれかが条件に一致するか？
-- [binary_search](/algorithm/binary_search.cpp) - ソート済みデータへの効率的な検索
-- [copy](/algorithm/copy.cpp) - 内容をコピー
-- [count](/algorithm/count.cpp) - 指定値の出現回数
-- [count_if](/algorithm/count_if.cpp) - 条件に一致する値の出現回数
-- [fill](/algorithm/fill.cpp) - 指定値でデータ範囲を埋める
-- [find](/algorithm/find.cpp) - 指定値の最初の出現位置を指すイテレータ
-- [find_first_of](/algorithm/find_first_of.cpp) - 随時検索 (ない場合データ末尾)
-- [find_if](/algorithm/find_if.cpp) - 条件一致する最初の値 (ない場合データ末尾)
-- find_if_not - find_ifの逆
-- [for_each](/algorithm/for_each.cpp) - 全要素に関数実行
-- [includes](/algorithm/includes.cpp) - ソート済みデータを別データの値で検索し、全て見つかるか？
-- [is_permutation](/algorithm/is_permutation.cpp) - データの順列が別データに存在するか？
-- [is_sorted](/algorithm/is_sorted.cpp) - データが昇順で並べられているか？
-- [is_sorted_until](/algorithm/is_sorted_until.cpp) - 昇順になっていない最初の値へのイテレータ
-- [lower_bound](/algorithm/lower_bound.cpp) - ソート済みデータで、指定値より小さい最初の要素へのイテレータ
-- [max_element](/algorithm/max_element.cpp) - データ内の最大値へのイテレータ
-- [merge](/algorithm/merge.cpp) - ２つのデータの値をマージして別データにコピー
-- [min_element](/algorithm/min_element.cpp) - データ内の最小値へのイテレータ
-- [none_of](/algorithm/none_of.cpp) - 各要素が条件に一致しないか？
-- [replace](/algorithm/replace.cpp) - 指定値を別の値に置換
-- [replace_copy](/algorithm/replace_copy.cpp) - 指定値を別の値に置換したコピーを作成
-- [replace_copy_if](/algorithm/replace_copy_if.cpp) - 条件に一致した値を別の値に置換したコピーを作成
-- [replace_if](/algorithm/replace_if.cpp) - 条件に一致した値を別の値に置換
-- [reverse](/algorithm/reverse.cpp) - 要素を逆順にする
-- [reverse_copy](/algorithm/reverse_copy.cpp) - 要素を逆順にしたコピーを作成
-- [search](/algorithm/search.cpp) - 別のデータで指定された値のシーケンスを検索
-- [sort](/algorithm/sort.cpp) - 要素を昇順にする
-- [swap](/algorithm/swap.cpp) - ２つの変数の値を交換する
-- [swap_ranges](/algorithm/swap_ranges.cpp) - データの値を同じサイズの別データの値と交換
-- [upper_bound](/algorithm/upper_bound.cpp) - ソート済みデータで、指定値より大きい最初の要素へのイテレータ
+- イテレータ
+    - find - 指定値と同じ値の要素へのイテレータ
+    - is_sorted_until - 昇順になっていない要素へのイテレータ
+    - min_element - 最大値の要素へのイテレータ
+    - max_element - 最小値の要素へのイテレータ
+    - lower_bound - 指定値以上の要素へのイテレータ
+    - upper_bound - 指定値より大きい要素へのイテレータ
+    - find_first_of - 随時検索
+    - find_if - 条件一致する最初の要素へのイテレータ
+
+    ```cpp
+    bool lessThan40(int value) {
+        return value < 40;
+    }
+
+    vector<int> nums = {40, 50, 10, 20, 30};
+
+    auto iter1 = find(nums.begin(), nums.end(), 10);
+    if (iter1 != nums.end()) {
+        cout << "Found: " << *iter1 << endl;
+    }
+    auto iter2 = is_sorted_until(nums.begin(), nums.end());
+    cout << *iter2 << endl;
+    auto iter3 = min_element(nums.begin(), nums.end());
+    cout << *iter3 << endl;
+    auto iter4 = max_element(nums.begin(), nums.end());
+    cout << *iter4 << endl;
+    auto iter5 = lower_bound(nums.begin(), nums.end(), 20);
+    cout << *iter5 << endl;
+    auto iter6 = upper_bound(nums.begin(), nums.end(), 20);
+    cout << *iter6 << endl;
+    vector<int> tmps = {60, 70, 20, 10};
+    auto iter7 = find_first_of(nums.begin(), nums.end(), tmps.begin(), tmps.end());
+    cout << *iter7 << endl;
+    auto iter8 = find_if(nums.begin(), nums.end(), lessThan40);
+    cout << *iter8 << endl;
+    ```
+
+- 置換
+    - replace - 指定値を別の値に置換
+    - replace_copy - replaceしたコピー作成
+    - replace_copy_if - 条件付きで、replaceしたコピー作成
+    - replace_if - 条件付きでrelpace
+
+    ```cpp
+    bool lessThan40(int value) {
+        return value < 40;
+    }
+
+    vector<int> nums = {50, 10, 30, 20, 40};
+    vector<int> nums2(5);
+    vector<int> nums3(5);
+
+    replace(nums.begin(), nums.end(), 50, 60);
+    replace_copy(nums.begin(), nums.end(), nums2.begin(), 60, 70);
+    replace_copy_if(nums.begin(), nums.end(), nums3.begin(), lessThan40, 99);
+    replace_if(nums.begin(), nums.end(), lessThan40, 0);
+    ```
+
+- 交換
+    - swap - ２つの変数の値を交換
+    - swap_ranges - ２つの配列の指定範囲の要素を交換
+
+    ```cpp
+    int a = 10;
+    int b = 20;
+    swap(a, b);
+
+    vector<int> x = {10, 20, 30};
+    vector<int> y = {97, 98, 99, 40, 50};
+    // x[0] ~ x[2]と、y[0] ~ y[2]を交換
+    swap_ranges(x.begin(), x.end(), y.begin());
+    ```
+
+- 判定
+    - all_of - 全ての要素が条件に一致するか？
+    - any_of - いずれかの要素が条件に一致するか？
+    - none_of - どの条件も一致しないか？
+    - is_sorted - 昇順か？
+    - includes - ２つのソート済み配列で、配列Aが配列Bの要素を全て持っているか？
+    - is_permutation - 片方の順列がもう片方に存在するか？
+
+    ```cpp
+    vector<int> nums = {10, 20, 30, 40};
+
+    cout << all_of(nums.begin(), nums.end(), lessThan40) << endl;
+    cout << any_of(nums.begin(), nums.end(), lessThan40) << endl;
+    cout << none_of(nums.begin(), nums.end(), lessThan40) << endl;
+    cout << is_sorted(nums.begin(), nums.end()) << endl;
+
+    vector<int> tmps = {20, 40};
+    cout << includes(nums.begin(), nums.end(), tmps.begin(), tmps.end()) << endl;   // 1
+    cout << includes(tmps.begin(), tmps.end(), nums.begin(), nums.end()) << endl;   // 0
+
+    vector<int> others = {40, 30, 20, 10};
+    cout << is_permutation(nums.begin(), nums.end(), others.begin(), others.end()) << endl;
+    ```
+
+- 検索
+    - binary_search - ソート済みデータへの効率的な検索
+    - search - 別のデータで指定された値のシーケンスを検索
+
+    ```cpp
+    vector<int> nums    = {10, 30, 50, 70};
+    vector<int> targets = {10, 30, 50, 80};
+
+    cout << binary_search(nums.begin(), nums.end(), 30) << endl;
+    cout << (search(nums.begin(), nums.end(), targets.begin(), targets.end())!= nums.end());
+    ```
+
+- ソート
+    - sort - 昇順
+    - reverse - 逆順
+    - reverse_copy - 逆順要素のコピー
+
+    ```cpp
+    vector<int> nums = {40, 10, 20, 30};
+    vector<int> tmps(4);
+
+    sort(nums.begin(), nums.end());
+    reverse(nums.begin(), nums.end());
+    reverse_copy(nums.begin(), nums.end(), tmps.begin());
+    ```
+
+- その他
+    - count - 指定値の出現回数
+    - count_if - 条件一致する値の出現回数
+    - copy - コピー
+    - fill - 指定値でデータ範囲を埋める
+    - merge - ２つのデータをマージしてコピー
+    - for_each - 全要素に関数を実行
+
+    ```cpp
+    bool lessThan40(int value) {
+        return value < 40;
+    }
+
+    void plusOne(int &value) {
+        value++;
+    }
+
+    vector<int> nums = {40, 10, 20, 30};
+    vector<int> tmps(4);
+    vector<int> merged(8);
+
+    cout << count(nums.begin(), nums.end(), 10) << endl;
+    cout << count_if(nums.begin(), nums.end(), lessThan40) << endl;
+    copy(nums.begin(), nums.end(), tmps.begin());
+    fill(tmps.begin(), tmps.end(), 99);
+    merge(nums.begin(), nums.end(), tmps.begin(), tmps.end(), merged.begin());
+    for_each(nums.begin(), nums.end(), plusOne);
+    ```
 
 [⬆︎目次へ戻る](#目次)
 
