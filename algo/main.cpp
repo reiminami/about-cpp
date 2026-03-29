@@ -6,6 +6,8 @@
 #include "sort/insertionSort.hpp"
 #include "sort/quickSort.hpp"
 #include "sort/mergeSort.hpp"
+#include "sort/heapSort.hpp"
+
 using namespace std;
 
 struct Algo {
@@ -34,6 +36,7 @@ int main() {
         {"挿入ソート", insertionSort::run},
         {"クイックソート", quickSort::run},
         {"マージソート", mergeSort::run},
+        {"ヒープソート", heapSort::run},
     };
 
     while (true) {
