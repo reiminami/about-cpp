@@ -502,7 +502,16 @@ $ make
 $ ./main
 ```
 
-- [BFS (幅優先探索)](/algo/bfs.hpp) - 最短経路を探索
-- [DFS (深さ優先探索)](/algo/dfs.hpp) - 省メモリで深く探索
+- 探索
+    - [BFS (幅優先探索)](/algo/search/bfs.hpp) - 最短経路を保証して探索
+    - [DFS (深さ優先探索)](/algo/search/dfs.hpp) - 深さを優先して探索
+    - [最良優先探索](/algo/search/bestFirstSearch.hpp) - 評価関数に基づいて優先度順に探索
+
+- ソート
+    - [挿入ソート](/algo/sort/insertionSort.hpp) - 要素を適切な位置に挿入しながら整列
+    - [バブルソート](/algo/sort/bubbleSort.hpp) - 隣接要素を比較・交換して整列
+    - [クイックソート](/algo/sort/quickSort.hpp) - 基準値で分割し、再帰的に整列
+    - [マージソート](/algo/sort/mergeSort.hpp) - 分割してから順にマージして整列
+    - [ヒープソート](/algo/sort/heapSort.hpp) - 完全ニ分木を使って、最大(最小)要素を順に取り出して整列
 
 [⬆︎目次へ戻る](#目次)
