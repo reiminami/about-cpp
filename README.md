@@ -1,97 +1,208 @@
-## about-cpp
+## About C++
 
 *C++17
 
-## トピック
-
-- 複数ファイルの使用 ([main.cpp](/multiple_files/main.cpp) | [sub.cpp](/multiple_files/sub.cpp))
-- ヘッダファイルの使用 ([main.cpp](/use_header/main.cpp) | [f.cpp](/use_header/f.cpp) | [f.hpp](/use_header/f.hpp))
-- [ライブラリ](/lib.md)
-- [命名規則](/naming.md)
-- [データ型](/datatypes.md)
-- [ベストプラクティス](/best_practice.md)
-
 ## 目次
 
+1. [命名規則](#命名規則)
 1. [Hello World](#hello-world)
 1. [変数と定数](#変数と定数)
+1. [データ型](#データ型)
 1. [条件分岐](#条件分岐)
 1. [ループ](#ループ)
 1. [配列](#配列)
-1. [コンテナ](#コンテナ)
+1. [列挙型](#列挙型)
 1. [関数](#関数)
 1. [構造体/クラス](#構造体クラス)
+1. [継承](#継承)
 1. [ポインタ](#ポインタ)
-1. [ポインタとクラス](#ポインタとクラス)
 1. [スマートポインタ](#スマートポインタ)
-1. [静的](#静的)
-1. [テンプレート](#テンプレート)
+1. [標準関数](#標準関数)
 1. [キャスト](#キャスト)
-1. [列挙型](#列挙型)
+1. [テンプレート](#テンプレート)
+1. [コマンドライン引数](#コマンドライン引数)
+1. [ヘッダファイル](#ヘッダファイル)
 1. [アルゴリズム](#アルゴリズム)
+
+## 命名規則
+
+**ファイル名**
+
+- ソースファイル名 - `my_source.cpp`
+- ヘッダファイル名 - `my_header.hpp`
+
+**基本**
+
+```cpp
+// マクロ
+#define NEW_LINE '\n'
+
+// クラス
+class MyClass {
+    int my_var_;    // メンバ変数
+    void my_func(); // メンバ関数
+};
+
+// 構造体
+struct MyStruct {
+    int my_var;     // メンバ変数
+    void my_func(); // メンバ関数
+};
+
+// 列挙型
+enum MyEnum {
+    ONE, TWO, THREE,  // 列挙子
+};
+
+int main() {
+    std::string my_var = "Hello";   // 変数
+    const double MY_CONST = 3.14;   // 定数
+}
+```
+
+**共通**
+
+1. アンダースコアで始まる名前はつけない
+    予約後と名前衝突する可能性があるため。
+1. 略称をなるべく使わない
+    `buf` よりも`buffer` の方がわかりやすい。
+1. ハンガリアン記法を使わない
+    `m_value` とか意味がわからない。
+1. 最大40文字まで
+    長すぎると見づらい。
+1. 機能の目的が明確で、動作や情報に相応しい名前
+    初見でわかる方がいい。
+1. ヘッダファイルで`using` を使わない
+    そのヘッダファイルを読み込んだソースファイルの名前空間が汚染されるから。
+1. インクルードガードを使用する
+    同じヘッダファイルを複数回インクルードする問題を回避できる。
+1. メンバ変数にデフォルト値を割り当てる
+    メンバ変数の初期化を忘れると、未定義動作にバグが生じる可能性がある。
+
+[⬆︎目次へ戻る](#目次)
 
 ## Hello World
 
+**最低限のコード**
+
 ```cpp
 #include <iostream>
-using namespace std;    // std::cout がcoutだけで書けます。
 
-int main()
-{
-    cout << "Hello, World!" << endl;
+int main() {
+    std::cout << "Hello, World" << std::endl;
 }
 ```
+
+**コンパイル**
 
 ```sh
-$ g++ sample.cpp -o sample
-$ ./sample
-Hello, World!
+g++ src/sample.cpp -o src/sample
 ```
+
+**実行**
+
+```sh
+./src/sample
+```
+
+**ディレクティブ** - includeで標準ライブラリやヘッダファイルをインクルード可能
 
 ```cpp
-// コマンドライン引数も使用可能
-int main(int argc, char* argv[]) {
-    for (int i = 0; i < argc; ++i) {
-        cout << argv[i] << endl;
-    }
-}
+#include <iostream>
+#include "sample.h"
 ```
 
-> 以降の「include」「main関数」は省略
+**using namespace std** - `std::` を省略可能
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    cout << "Hello, World" << endl;
+}
+```
 
 [⬆︎目次へ戻る](#目次)
 
 ## 変数と定数
 
-```cpp
-std::string name = "John";  // 変数
-const double PI = 3.14;     // 定数（変更不可能）
-constexpr double TAX = 1.1; // 定数（コンパイル時に評価）
+**変数**
 
-// constexpr がエラーになる例
-int num = 10;
-constexpr int copyNum = num;    // 既知の値でないためエラー
+```cpp
+string name = "John";
+```
+
+**定数**
+
+```cpp
+const double PI = 3.14;
+```
+
+**constexpr**
+
+```cpp
+constexpr double PI = 3.14;
+
+// エラーになる例
+double tax = 1.1;
+constexpr double TAX = tax; // 既知の値でないためエラー
+```
+
+**static変数**
+
+```cpp
+static int cnt = 0;
+```
+
+[⬆︎目次へ戻る](#目次)
+
+## データ型
+
+**型一覧**
+
+```cpp
+string name = "John";       // 文字列
+int age = 12;               // 数値
+short si = 123;             // 数値 (16bit)
+long li = 1234;             // 数値 (64bit)
+unsigned int ui = 12345;    // 数値 (正のみ)
+float f = 3.14f;            // 浮動小数点型 (32bit, 小数点以下7まで)
+double d = 3.14;            // 浮動小数点型 (64bit, 小数点以下15まで)
+char c = 'J';               // 文字
+bool is_enable = true;      // 真偽値
+auto x = "cccx";            // 型推論
 ```
 
 [⬆︎目次へ戻る](#目次)
 
 ## 条件分岐
 
-```cpp
-// if
-if (num == 0) {
-} else if (num > 0) {
-} else {
-}
+**if**
 
-// switch
-switch (num) {
-    case 1:
-    case 2:
+```cpp
+if (score == 0) {
+    cout << 'A' << endl;
+} else if (score == 1) {
+    cout << 'B' << endl;
+} else {
+    cout << 'C' << endl;
+}
+```
+
+**switch**
+
+```cpp
+switch (score) {
+    case 0:
+        cout << 'A' << endl;
         break;
-    case 3:
+    case 1:
+        cout << 'B' << endl;
         break;
     default:
+        cout << 'C' << endl;
         break;
 }
 ```
@@ -100,21 +211,38 @@ switch (num) {
 
 ## ループ
 
+**for**
+
 ```cpp
-// 範囲for
-for (int num: nums) {
+for (int i=0; i<3; i++) {
+    cout << i << endl;
 }
+```
 
-// while
+**while**
+
+```cpp
+int i = 0;
 while (i < 3) {
+    cout << i++ << endl;
 }
+```
 
-// do-while
+**do-while**
+
+```cpp
+int j = 0;
 do {
-} while (i < 3);
+    cout << j++ << endl;
+} while (j < 3);
+```
 
-// for
-for (int i=0; i<3; i++){
+**範囲for**
+
+```cpp
+int nums[] = {10, 20, 30};
+for (int num : nums) {
+    cout << num << endl;
 }
 ```
 
@@ -122,396 +250,632 @@ for (int i=0; i<3; i++){
 
 ## 配列
 
-```cpp
-// 配列
-int nums[3] = {10, 20, 30};                     // 作成
-int numCount = sizeof(nums) / sizeof(nums[0]);  // 要素数
+**初期化・アクセス**
 
-// 多次元配列
-int arr[3][2] = {{10, 20}, {30, 40}, {50, 60}};
+```cpp
+int nums[] = {10, 20, 30, 40};          // 初期化
+cout << nums[3] << endl;                // アクセス
+cout << sizeof(nums) / sizeof(nums[0]); // 要素数
+```
+
+**多次元配列**
+
+```cpp
+int arr[3][2] = {{10, 20}, {30, 40}, {50, 60}}; // 初期化
 int rows = sizeof(arr) / sizeof(arr[0]);        // 行数
 int cols = sizeof(arr[0]) / sizeof(arr[0][0]);  // 列数
 int elms = sizeof(arr) / sizeof(arr[0][0]);     // 要素数
-
-// 動的配列 (C++ではvectorが一般的)
-int n;
-int* arr;
-n = 2;
-arr = new int[n] {10, 20};
-delete[] arr;
-n = 3;
-arr = new int[n] {10, 20, 30};
-delete[] arr;
 ```
+
+**動的配列** - (C++の場合はVectorの使用推奨)
+
+```cpp
+int n;
+int* nums;
+
+n = 2;
+nums = new int[n] {10, 20};
+
+n = 3;
+nums = new int[n] {10, 20, 30};
+
+delete[] nums;
+```
+
+**コンテナ**
+
+- [**vector**](/src/container/vector.cpp) - 動的配列
+- [**deque**](/src/container/deque.cpp) - 両端キュー
+- [**list**](/src/container/list.cpp) - 単方向リンクリスト
+- [**forward_list**](/src/container/forward_list.cpp) - 単方向リスト
+- [**array**](/src/container/array.cpp) - 固定長配列
+- [**stack**](/src/container/stack.cpp) - LIFO
+- [**queue**](/src/container/queue.cpp) - FIFO
+- [**priority_queue**](/src/container/priority_queue.cpp) - 優先度付きキュー
+- [**set**](/src/container/set.cpp) - 集合
+- [**multiset**](/src/container/multiset.cpp) - 集合 (重複許可)
+- [**map**](/src/container/map.cpp) - キーと値のペア連想配列
+- [**multimap**](/src/container/multimap.cpp) - キーと値のペア連想配列 (重複キー許可)
+- **unordered_set** - ハッシュ集合
+- **unordered_multiset** - ハッシュ集合 (重複許可)
+- **unordered_map** - ハッシュマップ
+- **unordered_multimap** - ハッシュマップ (重複キー許可)
 
 [⬆︎目次へ戻る](#目次)
 
-## コンテナ
+## 列挙型
+
+**enum**
 
 ```cpp
-// インポート
-#include <array>
-#include <tuple>
-#include <vector>
-#include <map>
-#include <unordered_map>
-#include <set>
-#include <unordered_set>
-
-// array
-array<int, 3> arr = {10, 20, 30};
-cout << arr[0] << endl;
-
-// tuple
-tuple<string, int, int> person = {"John", 170, 60};
-string name;
-int height, weight;
-tie(name, height, weight) = (person);
-
-// pair
-pair<string, int> person = {"John", 22};
-string name = person.first;
-int age     = person.second;
-tie(name, age) = person;
-
-// vector
-vector<int> v = {10, 20, 30};
-auto vdata = v.data();
-cout << *vdata << endl;
-
-// map, unordered_map
-map<string, int> member = {
-    {"John", 20},
-    {"Paul", 19},
+enum Direction {
+    TOP,        // 0
+    BOTTOM,     // 1
+    LEFT = 4,   // 4
+    RIGHT       // 5
 };
-cout << member["John"] << endl;
 
-// set, unordered_set
-set<string> member = {
-    "John", "Paul"
-};
+int main() {
+    Direction dir = Direction::RIGHT;
+    cout << dir << endl;
+}
 ```
 
+**キャスト**
+
 ```cpp
-vector<int> v = {10, 20, 30};
-
-// イテレータ (コンテナを共通の方法で操作)
-auto iter = v.begin();
-cout << *iter << endl;  // 10
-++iter;
-cout << *iter << endl;  // 20
-
-// for
-for (auto iter = v.begin(); iter != v.end(); ++iter) {
-    cout << *iter << endl;
+int right = static_cast<int>(Direction::RIGHT);
+if (right == RIGHT) {
+    cout << "右" << endl;
 }
+```
 
-// 範囲for
-for (auto&& elm : v) {
-    cout << elm << endl;
-}
+**enum class** - 他の列挙子と同じ名前でもエラーにならない
+
+```cpp
+enum class Hand {
+    LEFT,
+    RIGHT
+};
+
+enum class Outfielder {
+    LEFT,
+    CENTER,
+    RIGHT,
+};
 ```
 
 [⬆︎目次へ戻る](#目次)
 
 ## 関数
 
+**定義・使用**
+
 ```cpp
-// 基本
-void hello(string name) {
-    cout << "Hello, " << name << endl;
+int sum(int a, int b) {
+    return a + b;
 }
-hello("John");  // Hello, John
 
-// デフォルト引数
+int main() {
+    cout << sum(10, 20) << endl;
+}
+```
+
+**参照渡し**
+
+```cpp
+void plus_one(int& num) {
+    num++;
+}
+
+int main() {
+    int x = 10;
+    plus_one(x);
+    cout << x << endl;  // 11
+}
+```
+
+**デフォルト引数**
+
+```cpp
 void hello(string name = "WORLD") {
-    cout << "Hello, " << name << endl;
+    cout << "Hello, " << name << "!" << endl;
 }
 
-// オーバーロード (異なる引数を持つ関数)
-void twice(int x)    { cout << x * 2 << endl; }
-void twice(double x) { cout << x * 2 << endl; }
-
-// 関数に配列を渡す
-void OutputArray(const int* arr) {
-    for (int i=0; i<3; i++) cout << arr[i] << endl;
+int main() {
+    hello();        // Hello, WORLD!
+    hello("John");  // Hello, John!
 }
-int arr[3] = {10, 20, 30};
-OutputArray(arr);
+```
+
+**オーバーロード** - 異なる引数を持つ同じ名前の関数
+
+```cpp
+void twice(int x) {}
+void twice(double x) {}
+```
+
+**関数に配列を渡す**
+
+```cpp
+void output_array(const int* nums) {
+    for (int i=0; i<3; i++) {
+        cout << nums[i] << endl;
+    }
+}
+
+int main() {
+    int nums[5] = {10, 20, 30, 40, 50};
+    output_array(nums);
+}
+```
+
+**static変数を使う**
+
+```cpp
+void count_up() {
+    static int cnt = 0;
+    cnt++;
+    cout << cnt << endl;
+}
 ```
 
 [⬆︎目次へ戻る](#目次)
 
 ## 構造体/クラス
 
+**クラス** - アクセス修飾子のデフォルトがprivate
+
 ```cpp
-// 構造体 (アクセス修飾子のデフォルトはpublic)
-struct Human {
-};
-
-// クラス (アクセス修飾子のデフォルトはpublic)
-class Animal {
-};
-
-// 詳細説明
-class Rectangle {
-    int width;
-    int height;
+class Person {
 public:
-    // コンストラクタ
-    Rectangle(int w, int h): width(w), height(h) {}
-    // constメンバ関数 (データの改変を防ぐ)
+    string name;
+};
+```
+
+**構造体** - アクセス修飾子のデフォルトがpublic
+
+```cpp
+struct Person {
+    string name_;
+};
+```
+
+**インスタンス生成**
+
+```cpp
+Person person;
+person.name_ = "John";
+cout << person.name_ << endl;
+```
+
+**基本**
+
+```cpp
+struct Rectangle {
+    int width_;
+    int height_;
+
+    Rectangle(int w, int h): width_(w), height_(h) {}
+
     int area() const {
-        return height * width;
+        return width_ * height_;
     }
-    // クラス外での関数定義
+};
+
+int main() {
+    Rectangle rect(10, 20);
+    cout << rect.area() << endl;
+}
+```
+
+**クラス外での関数定義**
+
+```cpp
+struct Person {
+    string name_;
     void display();
 };
 
-void Rectangle::display() {
-    cout << "WIDTH: " << width << " HEIGHT: " << height << endl;
+void Person::display() {
+    cout << name_ << endl;
 }
 
-// インスタンス生成
-Rectangle r(10, 20);
-cout << r.area() << endl;
-r.display();
+int main() {
+    Person person;
+    person.name_ = "John";
+    person.display();
+}
 ```
+
+[⬆︎目次へ戻る](#目次)
+
+## 継承
+
+**継承**
 
 ```cpp
-// 継承
-class Dad {};
-class Kid : public Dad {};
-
-// default (暗黙的に定義されるものを、明示的に定義する)
-class A {
-    A() = default;
+struct Square : public Rectangle {
+    Square(int side) : Rectangle(side, side) {}
 };
 
-// delete (暗黙定義を明示的に禁止。コピー禁止などに使用できる)
-class B {
-    B(const B&) = delete;
-};
-B b1;
-B b2 = b1;  // エラー
+int main() {
+    Square square(20);
+    cout << square.area() << endl;
+}
 ```
+
+**default** - 暗黙的に定義されるものを、明示的に定義する
+
+```cpp
+struct Animal {
+    Animal() = default;
+};
+```
+
+**delete** - 暗黙定義を明示的に禁止 (コピー禁止などに使用できる)
+
+```cpp
+struct Animal {
+    Animal(const Animal&) = delete;
+};
+```
+
+[⬆︎目次へ戻る](#目次)
 
 ## ポインタ
 
+**ポインタ** - 別の変数を操作するための変数
+
 ```cpp
-// ポインタ (値ではなく、値を指すメモリアドレスを保持)
 int age = 22;
-int* ptrAge = &age;
-cout << *ptrAge << endl;
+int* ptr = &age;    // ageを指すポインタ
+*ptr = 25;          // ptr経由でageを書き換える
 
-// nullptr (どの変数も参照していないポインタ)
-int* ptrX = nullptr;
+age++;
+(*ptr)++;
 
-// ポインタの動作制御
-int x = 99;
-const int* ptr1 = &x;           // オブジェクトを不変にする
-int* const ptr2 = &x;           // アドレスを不変にする
-const int* const ptr3 = &x;     // オブジェクトとアドレスを不変にする
+cout << age << endl;    // 27
+cout << *ptr << endl;   // 27
+cout << &age << endl;   // (アドレス)
+cout << ptr << endl;    // (アドレス)
+```
 
-// 参照
-int hp = 9999;
-int& refHp = hp;
-cout << refHp << endl;
+**nullptr** - 何も指していないポインタ
 
-// 配列で使う
-int arr[3] = {10, 20, 30};
-int* ptrArr = arr;
-cout << *ptrArr       << endl;  // 10
-cout << *(ptrArr + 1) << endl;  // 20
+```cpp
+int* ptr = nullptr;
+```
 
-// ポインタ渡し (nullチェック必須)
-bool twice(int* num) {
-    if (num == nullptr) return false;
-    *num *= 2;
+**参照** - 別名
+
+```cpp
+int age = 26;
+int& my_age = age;  // 別名
+my_age = 27;
+
+cout << my_age << endl; // 27
+```
+
+**動作制御**
+
+```cpp
+int age = 31;
+const int* ptr1 = &age;         // オブジェクト不変
+int* const ptr2 = &age;         // アドレス不変
+const int* const ptr3 = &age;   // オブジェクト＆アドレス不変
+```
+
+**配列で使う**
+
+```cpp
+int nums[3] = {10, 20, 30};
+int* ptr = nums;
+cout << *ptr << endl;       // 10
+cout << *(ptr + 1) << endl; // 20
+```
+
+**ポインタ渡し (nullチェック必須)**
+
+```cpp
+bool twice(int* number) {
+    if (number == nullptr) return false;
+    *number *= 2;
     return true;
 }
-int x = 64;
-twice(&x);      // x: 128
 
-// 参照渡し
+int main() {
+    int x = 64;
+    twice(&x);
+    cout << x << endl;  // 128
+}
+```
+
+**参照渡し**
+
+```cpp
 void swap(int& a, int& b) {
     int temp = a;
     a = b;
     b = temp;
 }
-int a = 100;
-int b = 200;
-swap(a, b);
 
-// クラス操作
+int main() {
+    int a = 100;
+    int b = 200;
+    swap(a, b);
+    cout << a << " " << b << endl;  // 200 100
+}
+```
+
+**クラス操作**
+
+```cpp
 Rectangle rect(10, 20);
-Rectangle* ptrRect = &rect;
-cout << (*ptrRect).area() << endl;
+Rectangle* ptr = &rect;
+cout << (*ptr).area() << endl;  // 200
 ```
 
 [⬆︎目次へ戻る](#目次)
 
 ## スマートポインタ
 
+**unique_ptr** - 所有者が1人だけ
+
 ```cpp
-// unique_ptr (所有者が１人だけのポインタ)
-unique_ptr<int> p1 = make_unique<int>(10);
-cout << *p1 << endl;
+unique_ptr<int> ptr = make_unique<int>(10);
+cout << *ptr << endl;   // 10
+```
 
-// move (所有権を移動させる)
-unique_ptr<int> p2 = std::move(p1);
-cout << *p2 << endl;
+**move** - 所有者を移動させる
 
-// shared_ptr (複数のポインタで同じオブジェクトを共有するポインタ)
-shared_ptr<int> p3 = make_shared<int>(30);
-shared_ptr<int> p4 = p3;
-cout << *p3 << " " << *p4 << endl;
+```cpp
+unique_ptr<int> ptr1 = make_unique<int>(20);
+unique_ptr<int> ptr2 = std::move(ptr1);
+cout << *ptr2 << endl;  // 20
+```
 
-// use_count (参照数を確認) [参照が0になると、自動で削除される]
-cout << p4.use_count() << endl; // 2
-p4.reset();
-cout << p4.use_count() << endl; // 0 (削除)
+**shared_ptr** - 複数のポインタで同じオブジェクトを共有する
 
-// weak_ptr (shared_ptrを参照するが、所有権は持たないポインタ)
-shared_ptr<int> p5 = make_shared<int>(50);
-weak_ptr<int> p6 = p5;
-if (auto sp = p6.lock()) {
+```cpp
+shared_ptr<int> ptr1 = make_shared<int>(30);
+shared_ptr<int> ptr2 = ptr1;
+cout << *ptr1 << endl;  // 30
+cout << *ptr2 << endl;  // 30
+```
+
+**use_count** - 参照数を確認 (参照が0になると自動で削除)
+
+```cpp
+shared_ptr<int> ptr1 = make_shared<int>(40);
+cout << ptr1.use_count() << endl;   // 1
+ptr1.reset();
+cout << ptr1.use_count() << endl;   // 0 (削除)
+```
+
+**weak_ptr** - shared_ptrを参照するが、所有権は持たない
+
+```cpp
+shared_ptr<int> ptr1 = make_shared<int>(50);
+weak_ptr<int> ptr2 = ptr1;
+
+if (auto sp = ptr2.lock()) {
     cout << *sp << endl;    // 50
 }
 ```
 
 [⬆︎目次へ戻る](#目次)
 
-## 静的
+## 標準関数
+
+**iostream** - 入出力
+
+- [ユーザー入力を読み取る](/src/iostream/input.cpp)
+- [複数入力](/src/iostream/multi_input.cpp)
 
 ```cpp
-// static変数
-void countUp() {
-    static int cnt = 0;
-    cnt++;
-    cout << cnt << endl;
-}
+cout << "HELLO" << endl;        // 出力
+cerr << "ERROR" << endl;        // エラーメッセージ出力
+clog << "LOG" << endl;          // ログメッセージ出力
+```
 
-// staticメンバ関数
-struct Calc {
-    static int add(int a, int b) { return a + b; }
+**fstream** - ファイル
+
+- [ファイルの書き込み](/src/fstream/file_write.cpp)
+- [ファイル追記](/src/fstream/file_appending.cpp)
+- [ファイル読み込み](/src/fstream/file_read.cpp)
+
+**cmath** - 数学
+
+```cpp
+cout << abs(-4) << endl;                // 絶対値
+cout << ceil(1.1) << endl;              // 切り上げ
+cout << floor(1.9) << endl;             // 切り捨て
+cout << round(4.5) << endl;             // 浮動小数点を丸める
+cout << trunc(4.9) << endl;             // 整数部分を返す
+cout << fmin(3.1, 3.2) << endl;         // 最小値
+cout << fmax(3.1, 3.2) << endl;         // 最大値
+cout << fmod(15.0, 2.0) << endl;        // 余り
+cout << remainder(15.0, 2.0) << endl;   // 剰余
+cout << pow(3.0, 4.0) << endl;          // べき乗
+cout << hypot(1.0, 1.0) << endl;        // 原点からの距離
+```
+
+**string** - 文字列
+
+```cpp
+string txt = "Hello, World";
+
+cout << txt.front() << endl;        // 先頭の文字にアクセス
+cout << txt.back() << endl;         // 末尾の文字にアクセス
+cout << txt.find("o") << endl;      // 文字列[0]の最初の出現位置
+cout << txt.rfind("o") << endl;     // 文字列[0]の最後の出現位置
+cout << txt.at(1) << endl;          // 位置[0]の文字
+cout << txt.substr(3) << endl;      // 位置[0]から末尾までの文字列
+cout << txt.substr(3, 6) << endl;   // 位置[0]から[1]文字目までの文字列
+txt.append(" HELLO");               // 文字列[0]を末尾に追加
+txt.erase(13);                      // 位置[0]以降の文字の削除
+txt.replace(2, 4, "ABCD");          // 位置[0]から文字数[1]分を文字列[2]に置換
+txt.insert(4, "cc");                // 位置[0]に文字列[1]を挿入
+cout << txt.empty() << endl;        // 文字列が空か？
+cout << txt.length() << endl;       // 文字列の長さ
+txt.resize(13);                     // 文字列のサイズを変更
+
+// 2つの文字列を交換
+string s = "sample";
+txt.swap(s);
+```
+
+**algorithm** - アルゴリズム
+
+- [イテレータ](/src/algorithm/iterator.cpp)
+- [置換](/src/algorithm/replace.cpp)
+- [交換](/src/algorithm/swap.cpp)
+- [判定](/src/algorithm/judge.cpp)
+- [検索](/src/algorithm/search.cpp)
+- [ソート](/src/algorithm/sort.cpp)
+- [その他](/src/algorithm/misc.cpp)
+
+[⬆︎目次へ戻る](#目次)
+
+## キャスト
+
+**static_cast** - 型変換を明示的に行い、必要があれば値を変更
+
+```cpp
+double pi = 3.14;
+int x = static_cast<int>(pi);
+cout << x << endl;  // 3
+```
+
+**dynamic_cast** - 実行時型チェックを伴う安全なダウンキャスト
+
+```cpp
+struct Dad {
+    virtual ~Dad() {}
 };
-cout << Calc::add(2, 3) << endl;
 
+struct Kid : public Dad {
+};
+
+int main() {
+    Dad* bro1 = new Kid();
+    Kid* bro2 = dynamic_cast<Kid*>(bro1);
+}
+```
+
+**const_cast** - const修飾を変更
+
+```cpp
+string name = "John";
+const string& ref_name = name;
+string x = const_cast<string&>(ref_name);
+x = "Paul";
+```
+
+**istringstream** - 文字列から数値に変換
+
+```cpp
+#include <iostream>
+#include <sstream>
+using namespace std;
+
+int main() {
+    string num = "10";
+    int n;
+    istringstream ss;
+    ss = istringstream(num);
+    ss >> n;    // n = 10
+}
+```
+
+**charから数値に変換**
+
+```cpp
+char c = '4';
+int n = c - '0';    // n = 4
 ```
 
 [⬆︎目次へ戻る](#目次)
 
 ## テンプレート
 
+**テンプレート** - コンパイル時に型ごとのコードを生成
+
 ```cpp
-// template (コンパイル時に型ごとのコードを生成)
 template <typename T>
 T sum(T a, T b) {
     return a + b;
 }
-cout << sum(2, 3) << endl;
-cout << sum(2.5, 3.5) << endl;
 
-// クラスでの使用例
+int main() {
+    cout << sum(10, 20) << endl;        // 30
+    cout << sum(15.8, 21.7) << endl;    // 37.5
+}
+```
+
+**クラスで使う**
+
+```cpp
 template <typename T>
 struct Calc {
-    T width;
-    T height;
-    Calc(T w, T h): width(w), height(h) {}
-    T area() { return width * height; }
+    T width_;
+    T height_;
+    Calc(T w, T h): width_(w), height_(h) {}
+    T area() {
+        return width_ * height_;
+    }
 };
-Calc<int>    a(10, 20);
-Calc<double> b(10.5, 20.5);
+
+int main() {
+    Calc<int> calc1(10, 20);
+    cout << calc1.area() << endl;   // 200
+
+    Calc<double> calc2(10.5, 21.6);
+    cout << calc2.area() << endl;   // 226.8
+}
 ```
 
 [⬆︎目次へ戻る](#目次)
 
-## キャスト
+## コマンドライン引数
+
+**コード**
 
 ```cpp
-// static_cast (型変換を明示的に行い、必要があれば値を変更)
-double pi = 3.14;
-int x = static_cast<int>(pi);   // 3
+#include <iostream>
+using namespace std;
 
-// dynamic_cast (実行時型チェックを伴う、安全なダウンキャスト)
-struct Dad {
-    virtual ~Dad() {}
-};
-struct Kid : public Dad {
-};
-Dad* bro1 = new Kid();
-Kid* bro2 = dynamic_cast<Kid*>(bro1);
-
-// const_cast (const修飾を変更)
-std::string name = "John";
-const string& refName = name;
-std::string x = const_cast<string&>(refName);
-x = "Paul";
-
-// istringstream (文字列 -> 数値)
-#include <sstream>
-std::string number = "10";
-int n;
-istringstream ss;
-ss = istringstream(number);
-ss >> n;    // n=10
-
-// 文字 -> 数値
-char c = '4';
-int n = c - '0';    // n=4
+int main(int argc, char *argv[]) {
+    for (int i=0; i<argc; ++i) {
+        cout << argv[i] << endl;
+    }
+}
 ```
 
-[⬆︎目次へ戻る](#目次)
-
-## 列挙型
-
-```cpp
-// enum (各列挙子は整数、指定なしの場合0から割り振り)
-enum Suit {
-    Hearts,     // 0
-    Diamonds,   // 1
-    Clubs = 5,  // 5
-    Spades,     // 6
-};
-
-// 使用例
-Suit s = Suit::Hearts;  // 0
-cout << Suit::Clubs;    // 5
-
-// 明示的型変換で数値型に代入可能になる
-int x = static_cast<int>(Suit::Hearts);
-
-// enum class (他列挙型の列挙子との名前が被っても問題なし)
-enum AA {
-    X
-};
-enum BB {
-    X
-};
-```
-
-[⬆︎目次へ戻る](#目次)
-
-## アルゴリズム
+**引数なしで実行**
 
 ```sh
-# 確認方法
-$ cd algo
-$ make
-$ ./main
+$ ./src/sample
+./src/sample
 ```
 
-- 探索
-    - [BFS (幅優先探索)](/algo/search/bfs.hpp) - 最短経路を保証して探索
-    - [DFS (深さ優先探索)](/algo/search/dfs.hpp) - 深さを優先して探索
-    - [最良優先探索](/algo/search/bestFirstSearch.hpp) - 評価関数に基づいて優先度順に探索
+**引数ありで実行**
 
-- ソート
-    - [挿入ソート](/algo/sort/insertionSort.hpp) - 要素を適切な位置に挿入しながら整列
-    - [バブルソート](/algo/sort/bubbleSort.hpp) - 隣接要素を比較・交換して整列
-    - [クイックソート](/algo/sort/quickSort.hpp) - 基準値で分割し、再帰的に整列
-    - [マージソート](/algo/sort/mergeSort.hpp) - 分割してから順にマージして整列
-    - [ヒープソート](/algo/sort/heapSort.hpp) - 完全ニ分木を使って、最大(最小)要素を順に取り出して整列
+```sh
+$ ./src/sample 10 20 30
+./src/sample
+10
+20
+30
+```
+
+[⬆︎目次へ戻る](#目次)
+
+## ヘッダファイル
+
+- [sub.hpp](/src/sub.hpp)
+- [sub.cpp](/src/sub.cpp)
+- [call_sub.cpp](/src/call_sub.cpp)
 
 [⬆︎目次へ戻る](#目次)
